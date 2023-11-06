@@ -1,6 +1,7 @@
-# DomainReloadSG
+# Domain Reload support through Source Generator
 Source Generator to support Domain Reload off in Unity (handle static fields and event handlers).
 
+[MIT LICENSE](./LICENSE) | [CHANGELOG](./CHANGELOG.md)
 ## Usage
 You have two ways to use this repository:
 ### 1 - Use a release
@@ -23,8 +24,11 @@ You have two ways to use this repository:
 
 ### Limitations
 - The class you're augmenting _has to be_ decorated with the ```partial``` keyword.
-- Currently there is no way of excluding classes, static fields or event handlers from this service.
+- Currently there is no way of excluding static fields or methods from this service.
 - If you're using extra namespaces currently you need to explicitly write it in the code as opposed of in a ```using``` statement.
+
+### Exclusion
+- Decorate your partial class with ```[NoDomainReloadSupport]``` attribute if you want to exclude it completely.
 
 ### Example
 ```csharp

@@ -11,21 +11,11 @@ namespace LurkingNinja.DomainReloadSG
     [Generator]
     public class SourceGenerator : ISourceGenerator
     {
-        /**
-         * {0} Class name
-         * {1} Generated assignments
-         */
-        private const string SOURCE_TEMPLATE = @"public partial class {0}
-    {{
-        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ApplyStaticFieldsAndEventHandlers()
-        {{
-{1}
-        }}
-    }}";
-
-        public void Initialize(GeneratorInitializationContext context) =>
+        public void Initialize(GeneratorInitializationContext context)
+        {
             context.RegisterForSyntaxNotifications(() => new DrSyntaxReceiver());
+            Common.AddSource(context, "DomainReloadSG_Attributes", Common.ATTRIBUTES_SOURCE);
+        }
 
         public void Execute(GeneratorExecutionContext context)
         {
@@ -51,29 +41,34 @@ namespace LurkingNinja.DomainReloadSG
 
             foreach (var handler in dsr.eventHandlers) lines.AppendLine($"\t\t\t{handler}");
 
-            var source = string.Format(SOURCE_TEMPLATE,
+            var source = string.Format(Common.SOURCE_TEMPLATE,
                 /*{0}*/dsr.ClassToAugment.Identifier.ToFullString(),
                 /*{1}*/lines);
             
-            Common.AddSource(context, dsr.ClassToAugment.Identifier.ToFullString(), 
+            Common.AddSource(context, dsr.ClassToAugment.Identifier.ToFullString().Trim(), 
                 Common.NamespaceTemplateResolve(nameSpace, source));
         }
     }
 
     internal class DrSyntaxReceiver : ISyntaxReceiver
     {
+        // Something[.maybeSomething] += MethodNameFromCurrentClass;
         private const string EVENT_SUBSCRIPTION_REGEX = @"^\w+[.\w]*\s*\+\=\s*{0}\s*;$";
         
         internal ClassDeclarationSyntax ClassToAugment { get; private set; }
         internal readonly List<FieldDeclarationSyntax> fields = new List<FieldDeclarationSyntax>();
         internal readonly List<string> eventHandlers = new List<string>();
+
+        private readonly string[] _nameSpaceBlackList = { "TMPro" };
         
         public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
             if (!(syntaxNode is ClassDeclarationSyntax cds)) return;
             if (Common.IsAbstractClass(cds)) return;
             if (!Common.IsPartial(cds)) return;
-
+            if (Common.HasAttribute(cds, Common.NO_DOMAIN_SUPPORT_ATTRIBUTE)) return;
+            if (_nameSpaceBlackList.Contains(Common.GetNamespace(cds))) return;
+            
             var potentialMethods = new List<string>();
             
             fields.Clear();
