@@ -42,5 +42,7 @@ public partial class TestStaticOnNoDomainReload : MonoBehaviour
 }
 ```
 The result after entering play mode twice:
+
 ![Console screenshot showing resetting happening.](Console.png)
+
 Obviously the ```Edit > Project Settings > Editor > Enter Play Mode``` is set and the ```Reload Domain``` is not set.
