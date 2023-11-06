@@ -15,7 +15,7 @@ namespace LurkingNinja.DomainReloadSG
          * {0} Class name
          * {1} Generated assignments
          */
-        private readonly string _sourceTemplate = @"public partial class {0}
+        private const string SOURCE_TEMPLATE = @"public partial class {0}
     {{
         [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ApplyStaticFieldsAndEventHandlers()
@@ -23,7 +23,7 @@ namespace LurkingNinja.DomainReloadSG
 {1}
         }}
     }}";
-        
+
         public void Initialize(GeneratorInitializationContext context) =>
             context.RegisterForSyntaxNotifications(() => new DrSyntaxReceiver());
 
@@ -39,24 +39,24 @@ namespace LurkingNinja.DomainReloadSG
             foreach (var field in dsr.fields)
             {
                 if (field.Declaration.Variables.Count < 1) continue;
-                for (var i = 0; i < field.Declaration.Variables.Count; i++)
+                foreach (var vds in field.Declaration.Variables)
                 {
-                    var identifier = field.Declaration.Variables[i].Identifier.ToFullString();
-                    var value = field.Declaration.Variables[i].Initializer is null
+                    var identifier = vds.Identifier.ToFullString();
+                    var value = vds.Initializer is null
                         ? "default"
-                        : field.Declaration.Variables[i].Initializer.Value.ToFullString();
+                        : vds.Initializer.Value.ToFullString();
                     lines.AppendLine($"\t\t\t{identifier} = {value};");
                 }
             }
 
             foreach (var handler in dsr.eventHandlers) lines.AppendLine($"\t\t\t{handler}");
 
-            var source = string.Format(_sourceTemplate,
+            var source = string.Format(SOURCE_TEMPLATE,
                 /*{0}*/dsr.ClassToAugment.Identifier.ToFullString(),
                 /*{1}*/lines);
             
             Common.AddSource(context, dsr.ClassToAugment.Identifier.ToFullString(), 
-                Common.NamespaceTemplateResolve(nameSpace, source), true);
+                Common.NamespaceTemplateResolve(nameSpace, source));
         }
     }
 
@@ -65,8 +65,8 @@ namespace LurkingNinja.DomainReloadSG
         private const string EVENT_SUBSCRIPTION_REGEX = @"^\w+[.\w]*\s*\+\=\s*{0}\s*;$";
         
         internal ClassDeclarationSyntax ClassToAugment { get; private set; }
-        internal List<FieldDeclarationSyntax> fields = new List<FieldDeclarationSyntax>();
-        internal List<string> eventHandlers = new List<string>();
+        internal readonly List<FieldDeclarationSyntax> fields = new List<FieldDeclarationSyntax>();
+        internal readonly List<string> eventHandlers = new List<string>();
         
         public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
@@ -105,15 +105,16 @@ namespace LurkingNinja.DomainReloadSG
                     if (!ess.Expression.IsKind(SyntaxKind.AddAssignmentExpression)) continue;
 
                     var source = childNode.ToFullString().Trim();
-                    foreach (var reg in potentialMethods.Select(potentialMethod =>
+                    foreach (var _ in potentialMethods.Select(potentialMethod =>
                             new Regex(string.Format(EVENT_SUBSCRIPTION_REGEX, potentialMethod),
                                     RegexOptions.IgnoreCase)).Where(reg => reg.IsMatch(source)))
+                    {
                         eventHandlers.Add(source.Replace("+=", "-="));
+                    }
                 }
             }
+            
             if (fields.Count > 0 || eventHandlers.Count > 0) ClassToAugment = cds;
         }
     }
-
-
 }
