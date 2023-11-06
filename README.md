@@ -2,12 +2,17 @@
 Source Generator to support Domain Reload off in Unity (handle static fields and event handlers).
 
 ## Usage
-
-### Build
+You have two ways to use this repository:
+### 1 - Use a release
+- Download the latest release from [here](https://github.com/LurkingNinja/DomainReloadSG/releases).
+- Extract the DLL file somewhere into your ```Assets``` folder.
+- Continue below at the "Finishing" section
+### 2 - Build
 - Clone the repo
 - Open up in your favorite IDE
 - Build the solution
-- Copy the ```<repo path>\bin\Release\netstandard2.0\DomainReloadSG.dll``` into your ```Assets``` folder
+- Copy the ```<repo path>\bin\Release\netstandard2.0\DomainReloadSG.dll``` somewhere into your ```Assets``` folder
+### Finishing
 - Follow the instructions [here](https://docs.unity3d.com/Manual/roslyn-analyzers.html):
 > - Inside the Asset Browser, click on the .dll file to open the Plugin Inspector
     window.
@@ -46,3 +51,21 @@ The result after entering play mode twice:
 ![Console screenshot showing resetting happening.](Console.png)
 
 Obviously the ```Edit > Project Settings > Editor > Enter Play Mode``` is set and the ```Reload Domain``` is not set.
+
+The generated source code:
+```TestStaticOnNoDomainReload_codegen.cs```
+```csharp
+using System;
+using UnityEngine;
+
+    public partial class TestStaticOnNoDomainReload 
+    {
+        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ApplyStaticFieldsAndEventHandlers()
+        {
+			_number = default;
+			Application.quitting -= OnQuit;
+
+        }
+    }
+```
