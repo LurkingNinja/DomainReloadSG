@@ -63,20 +63,18 @@ The generated source code:
 using LurkingNinja.FirstNameSpace.SecondNameSpace.ForTest;
 using UnityEngine;
 using System;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
     public partial class TestStaticOnNoDomainReload 
     {
 #if UNITY_EDITOR
-        [InitializeOnEnterPlayMode]
-        static void ApplyStaticFieldsAndEventHandlers(EnterPlayModeOptions options)
+        [UnityEditor.InitializeOnEnterPlayMode]
+        static void ApplyStaticFieldsAndEventHandlers(UnityEditor.EnterPlayModeOptions options)
         {
-            if (!options.HasFlag(EnterPlayModeOptions.DisableDomainReload)) return;
+            if (!options.HasFlag(UnityEditor.EnterPlayModeOptions.DisableDomainReload)) return;
 			_number = default;
 			Application.quitting -= OnQuit;
 			OtherTestEvent.OnChangeSomethingStatic -= OnQuit;
+
         }
 #endif
     }
