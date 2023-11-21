@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -126,6 +127,18 @@ namespace LurkingNinja.Attributes
                 isNullOrEmpty
                     ? string.Empty
                     : "}");
+        }
+
+        internal static string GetUsingDirectives(ClassDeclarationSyntax cds)
+        {
+            var usingDirectives = new HashSet<string>();
+            foreach (var child in cds.SyntaxTree.GetRoot().ChildNodes())
+                if (child.IsKind(SyntaxKind.UsingDirective))
+                    usingDirectives.Add(child.ToString());
+            usingDirectives.Add("using System;");
+            usingDirectives.Add("using UnityEngine;");
+
+            return string.Join("\n", usingDirectives);
         }
         
         internal static void Log(string message) =>

@@ -23,13 +23,7 @@ namespace LurkingNinja.DomainReloadSG
             if (dsr.eventHandlers.Count == 0 && dsr.fields.Count == 0) return;
 
             var nameSpace = Common.GetNamespace(dsr.ClassToAugment);
-
-            var usingDirectives = new StringBuilder();
-            foreach (var child in dsr.ClassToAugment.SyntaxTree.GetRoot().ChildNodes())
-                if (child.IsKind(SyntaxKind.UsingDirective))
-                    usingDirectives.AppendLine(child.ToString());
-            usingDirectives.AppendLine("using System;");
-            usingDirectives.AppendLine("using UnityEngine;");
+            var usingDirectives = Common.GetUsingDirectives(dsr.ClassToAugment);
 
             var lines = new StringBuilder();
             
@@ -53,7 +47,7 @@ namespace LurkingNinja.DomainReloadSG
                 /*{1}*/lines);
             
             Common.AddSource(context, dsr.ClassToAugment.Identifier.ToFullString().Trim(), 
-                Common.NamespaceTemplateResolve(usingDirectives.ToString(), nameSpace, source));
+                Common.NamespaceTemplateResolve(usingDirectives, nameSpace, source));
         }
     }
 
