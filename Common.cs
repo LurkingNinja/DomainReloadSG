@@ -43,11 +43,14 @@ namespace LurkingNinja.Attributes
          */
         internal const string SOURCE_TEMPLATE = @"public partial class {0}
     {{
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ApplyStaticFieldsAndEventHandlers()
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnEnterPlayMode]
+        static void ApplyStaticFieldsAndEventHandlers(UnityEditor.EnterPlayModeOptions options)
         {{
+            if (!options.HasFlag(UnityEditor.EnterPlayModeOptions.DisableDomainReload)) return;
 {1}
         }}
+#endif
     }}";
 
         internal static string NamespaceTemplateResolve(string usingDirectives, string nameSpace, string source)
