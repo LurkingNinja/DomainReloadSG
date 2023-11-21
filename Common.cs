@@ -18,10 +18,9 @@ namespace LurkingNinja.DomainReloadSG
          * {0} name space if exists
          * {1} closing bracket for namespace if needed
          * {2} class definition
+         * {3} using directives
          */
-        private const string NS_TEMPLATE = @"using System;
-using UnityEngine;
-
+        private const string NS_TEMPLATE = @"{3}
 {0}
     {2}
 {1}";
@@ -50,13 +49,14 @@ namespace LurkingNinja.Attributes
         }}
     }}";
 
-        internal static string NamespaceTemplateResolve(string nameSpace, string source)
+        internal static string NamespaceTemplateResolve(string usingDirectives, string nameSpace, string source)
         {
             var ns = GetNamespaceTemplate(nameSpace);
             return string.Format(NS_TEMPLATE,
                 /*{0}*/ns.Item1,
                 /*{1}*/ns.Item2,
-                /*{2}*/source);
+                /*{2}*/source,
+                /*{3}*/usingDirectives);
         }
 
         internal static bool IsPartial(ClassDeclarationSyntax cds) =>

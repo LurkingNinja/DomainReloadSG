@@ -25,13 +25,13 @@ You have two ways to use this repository:
 ### Limitations
 - The class you're augmenting _has to be_ decorated with the ```partial``` keyword.
 - Currently there is no way of excluding static fields or methods from this service.
-- If you're using extra namespaces currently you need to explicitly write it in the code as opposed of in a ```using``` statement.
 
 ### Exclusion
 - Decorate your partial class with ```[NoDomainReloadSupport]``` attribute if you want to exclude it completely.
 
 ### Example
 ```csharp
+using LurkingNinja.FirstNameSpace.SecondNameSpace.ForTest;
 using UnityEngine;
 
 public partial class TestStaticOnNoDomainReload : MonoBehaviour
@@ -44,6 +44,7 @@ public partial class TestStaticOnNoDomainReload : MonoBehaviour
         Debug.Log($"Started with {_number}");
         _number += 10;
         Application.quitting += OnQuit;
+        OtherTestEvent.OnChangeSomethingStatic += OnQuit;
         Debug.Log($"Ended with {_number}");
     }
 
@@ -59,17 +60,17 @@ Obviously the ```Edit > Project Settings > Editor > Enter Play Mode``` is set an
 The generated source code:
 ```TestStaticOnNoDomainReload_codegen.cs```
 ```csharp
-using System;
+using LurkingNinja.FirstNameSpace.SecondNameSpace.ForTest;
 using UnityEngine;
 
     public partial class TestStaticOnNoDomainReload 
     {
-        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ApplyStaticFieldsAndEventHandlers()
         {
 			_number = default;
 			Application.quitting -= OnQuit;
-
+			OtherTestEvent.OnChangeSomethingStatic -= OnQuit;
         }
     }
 ```
