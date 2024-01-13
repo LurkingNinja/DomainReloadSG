@@ -1,20 +1,22 @@
-# Domain Reload support through Source Generator
+# Domain Reload support w/ Source Generator
 Source Generator to support Domain Reload off in Unity (handle static fields and event handlers).
 
-[MIT LICENSE](./LICENSE) | [CHANGELOG](./CHANGELOG.md)
-## Usage
-You have two ways to use this repository:
-### 1 - Use a release
+## Installation
+You can choose manually installing the package or from GitHub source.
+
+### Manual install
 - Download the latest release from [here](https://github.com/LurkingNinja/DomainReloadSG/releases).
 - Extract the DLL file somewhere into your ```Assets``` folder.
 - Continue below at the "Finishing" section
-### 2 - Build
+
+### Build from source
 - Clone the repo
 - Open up in your favorite IDE
 - Build the solution
-- Copy the ```<repo path>\bin\Release\netstandard2.0\DomainReloadSG.dll``` somewhere into your ```Assets``` folder
+- Copy the ```<repo path>\bin\Release\netstandard2.0\DomainReloadSupport.dll``` somewhere into your ```Assets``` folder
+
 ### Finishing
-- Follow the instructions [here](https://docs.unity3d.com/Manual/roslyn-analyzers.html):
+Follow the instructions [here](https://docs.unity3d.com/Manual/roslyn-analyzers.html):
 > - Inside the Asset Browser, click on the .dll file to open the Plugin Inspector
     window.
 > - Go to Select platforms for plugin and disable Any Platform.
@@ -27,7 +29,7 @@ You have two ways to use this repository:
 - Currently there is no way of excluding static fields or methods from this service.
 
 ### Exclusion
-- Decorate your partial class with ```[NoDomainReloadSupport]``` attribute if you want to exclude it completely.
+Decorate your partial class with ```[NoDomainReloadSupport]``` attribute if you want to exclude it completely.
 
 ### Example
 ```csharp
@@ -36,7 +38,6 @@ using UnityEngine;
 
 public partial class TestStaticOnNoDomainReload : MonoBehaviour
 {
-
     private static int _number;
     
     private void Start()
@@ -53,7 +54,7 @@ public partial class TestStaticOnNoDomainReload : MonoBehaviour
 ```
 The result after entering play mode twice:
 
-![Console screenshot showing resetting happening.](Console.png)
+![Console screenshot showing resetting happening.](docs/Console.png)
 
 Obviously the ```Edit > Project Settings > Editor > Enter Play Mode``` is set and the ```Reload Domain``` is not set.
 
@@ -79,3 +80,11 @@ using System;
 #endif
     }
 ```
+
+### Changelog
+#### [0.0.5] - 2022-11-20
+###### Changed
+- Moved into a real Unity project
+- Unity Test added to detect if static variable resets upon entering play mode while the Domain Reload is off
+
+[Previous changes >](CHANGELOG.md)

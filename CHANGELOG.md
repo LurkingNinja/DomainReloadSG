@@ -1,7 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-[READ ME](./README.md) | [MIT LICENSE](./LICENSE)
+## [0.0.5] - 2022-11-20
+### Changed
+- Moved into a real Unity project
+- Unity Test added to detect if static variable resets upon entering play mode while the Domain Reload is off
+
 ## [0.0.4] - 2022-11-20
 ### Changed
 - Moved onto using [InitializeOnEnterPlayMode] in UnityEditor only
