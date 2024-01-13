@@ -82,7 +82,7 @@ using System;
 ```
 
 ### Changelog
-#### [0.0.5] - 2022-11-20
+#### [0.0.5] - 2024-01-12
 ###### Changed
 - Moved into a real Unity project
 - Unity Test added to detect if static variable resets upon entering play mode while the Domain Reload is off
