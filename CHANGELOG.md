@@ -6,16 +6,16 @@ All notable changes to this project will be documented in this file.
 - Moved into a real Unity project
 - Unity Test added to detect if static variable resets upon entering play mode while the Domain Reload is off
 
-## [0.0.4] - 2022-11-20
+## [0.0.4] - 2023-11-20
 ### Changed
 - Moved onto using [InitializeOnEnterPlayMode] in UnityEditor only
 - Only execute if Domain Reload is OFF
 
-## [0.0.3] - 2022-11-20
+## [0.0.3] - 2023-11-20
 ### Changed
 - Limitation of missing using directives was removed
 
-## [0.0.2] - 2022-11-06
+## [0.0.2] - 2023-11-06
 ### Added
 - This CHANGELOG
 - [NoDomainReloadSupport] added to exclude classes
